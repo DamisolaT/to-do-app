@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:verraki_project1/core/utils/custom_app_bar.dart';
 import 'package:verraki_project1/core/utils/images.dart';
-import 'package:verraki_project1/personal_page.dart';
+import 'package:verraki_project1/views/folder/widgets/folder-container.dart';
+import 'package:verraki_project1/views/personal_page.dart';
 
 class FoldersPage extends StatefulWidget {
   const FoldersPage({super.key});
@@ -97,6 +98,7 @@ class _FoldersPageState extends State<FoldersPage> {
     Colors.purple,
     Colors.orange,
     Colors.yellow,
+    Colors.grey,
   ];
 
   @override
@@ -283,10 +285,8 @@ class _FoldersPageState extends State<FoldersPage> {
   }
 
   void showCreateFolderDialog(BuildContext context) {
-    // Reset or clear the text controller for a new dialog
     nameController.clear();
 
-    // Create a StatefulBuilder to manage dialog state
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -447,7 +447,7 @@ class _FoldersPageState extends State<FoldersPage> {
             content: Text('Are you sure you want to delete "$folderTitle"?'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context), // Cancel
+                onPressed: () => Navigator.pop(context),
                 child: const Text('Cancel'),
               ),
               TextButton(
@@ -455,8 +455,8 @@ class _FoldersPageState extends State<FoldersPage> {
                   setState(() {
                     folders.removeAt(index);
                   });
-                  _saveFolders(); // Persist updated list
-                  Navigator.pop(context); // Close dialog
+                  _saveFolders();
+                  Navigator.pop(context);
                 },
                 child: const Text(
                   'Delete',
@@ -465,91 +465,6 @@ class _FoldersPageState extends State<FoldersPage> {
               ),
             ],
           ),
-    );
-  }
-}
-
-class FoldersContainers extends StatelessWidget {
-  const FoldersContainers({
-    super.key,
-    required this.image,
-    required this.title,
-    required this.subtitle,
-    required this.number,
-    this.color,
-    this.titleColor = Colors.blue,
-    required this.showArrow,
-    this.onArrowTap,
-  });
-
-  final String image;
-  final String title;
-  final String subtitle;
-  final int number;
-  final Color? color;
-  final Color titleColor;
-  final bool showArrow;
-  final VoidCallback? onArrowTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color ?? Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(image, height: 70),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                          color: titleColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.clip,
-                        ),
-                        maxLines: 1,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (showArrow)
-                      GestureDetector(
-                        onTap: onArrowTap,
-                        child: Icon(Icons.arrow_forward, color: titleColor),
-                      ),
-                  ],
-                ),
-                if (number != 0 && subtitle.isNotEmpty)
-                  Row(
-                    children: [
-                      Text(
-                        number.toString(),
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        subtitle,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

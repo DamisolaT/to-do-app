@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:verraki_project1/folders_page.dart';
+import 'package:verraki_project1/views/folder/folders_page.dart';
 
 void main() {
   runApp(const MyApp());

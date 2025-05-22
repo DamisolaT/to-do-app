@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:verraki_project1/core/utils/images.dart';
-import 'package:verraki_project1/settings_page.dart';
+import 'package:verraki_project1/views/settings_page.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
@@ -21,13 +21,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.white,
       centerTitle: true,
-      leading: showBackButton
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: onBack ?? () => Navigator.pop(context),
-            )
-          : null,
-      
+      leading:
+          showBackButton
+              ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: onBack ?? () => Navigator.pop(context),
+              )
+              : null,
+
       title: Text(
         title,
         style: const TextStyle(
