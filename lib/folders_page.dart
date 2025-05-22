@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -82,7 +83,6 @@ class _FoldersPageState extends State<FoldersPage> {
   List<Map<String, dynamic>> folders = [];
 
   final List<String> iconOptions = [
-   
     ApppImages.personalImage,
     ApppImages.uiuxImage,
     ApppImages.writingImage,
@@ -106,100 +106,74 @@ class _FoldersPageState extends State<FoldersPage> {
     selectedIcon = iconOptions[0];
     selectedColor = colorOptions[0];
 
-    // Load saved folders when the widget initializes
-   // _loadFolders();
+    _loadFolders();
   }
 
-  // Load folders from SharedPreferences
   Future<void> _loadFolders() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? savedFoldersJson = prefs.getString('user_folders');
 
-      // Start with the "New Folder" template
-      List<Map<String, dynamic>> allFolders = [newFolderTemplate];
+      List<Map<String, dynamic>> loadedFolders = [newFolderTemplate];
 
-      // Add default folders
-      allFolders.addAll(defaultFolders);
-
-      // Add user-created folders if they exist
       if (savedFoldersJson != null && savedFoldersJson.isNotEmpty) {
         final List<dynamic> decodedFolders = jsonDecode(savedFoldersJson);
 
-        // Convert each folder and fix color values (JSON doesn't store Colors directly)
         for (var folder in decodedFolders) {
           if (folder is Map<String, dynamic>) {
-            // Convert color strings back to Color objects
-            if (folder['titleColor'] is String) {
-              folder['titleColor'] = _colorFromHex(folder['titleColor']);
-            }
-            if (folder['color'] is String) {
-              folder['color'] = _colorFromHex(folder['color']);
-            }
-            allFolders.add(Map<String, dynamic>.from(folder));
+            folder['titleColor'] = _colorFromHex(folder['titleColor']);
+            folder['color'] = _colorFromHex(folder['color']);
+            loadedFolders.add(Map<String, dynamic>.from(folder));
           }
         }
       }
 
       setState(() {
-        folders = allFolders;
+        folders = loadedFolders;
       });
     } catch (e) {
-      // If there's an error, fall back to default folders
+      if (kDebugMode) {
+        print('Error loading folders: $e');
+      }
       setState(() {
-        folders = [newFolderTemplate, ...defaultFolders];
+        folders = [newFolderTemplate];
       });
     }
   }
 
-  // Save folders to SharedPreferences
   Future<void> _saveFolders() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      // Skip the first folder (New Folder template) and default folders
       final userFolders =
-          folders.skip(1 + defaultFolders.length).map((folder) {
-            // Create a copy of the folder to modify
-            final Map<String, dynamic> folderCopy = Map<String, dynamic>.from(
-              folder,
-            );
-
-            // Convert Color objects to hex strings for JSON serialization
-            if (folderCopy['titleColor'] is Color) {
-              folderCopy['titleColor'] = _colorToHex(folderCopy['titleColor']);
-            }
-            if (folderCopy['color'] is Color) {
-              folderCopy['color'] = _colorToHex(folderCopy['color']);
-            }
-
+          folders.skip(1).map((folder) {
+            final folderCopy = Map<String, dynamic>.from(folder);
+            folderCopy['titleColor'] = _colorToHex(folderCopy['titleColor']);
+            folderCopy['color'] = _colorToHex(folderCopy['color']);
             return folderCopy;
           }).toList();
 
-      final String encodedFolders = jsonEncode(userFolders);
-      await prefs.setString('user_folders', encodedFolders);
+      final String encoded = jsonEncode(userFolders);
+      await prefs.setString('user_folders', encoded);
     } catch (e) {
       print('Error saving folders: $e');
     }
   }
 
-  // Helper function to convert Color to hex string
   String _colorToHex(Color color) {
     return '#${color.value.toRadixString(16).padLeft(8, '0')}';
   }
 
-  // Helper function to convert hex string to Color
   Color _colorFromHex(String hexString) {
     hexString = hexString.replaceFirst('#', '');
     if (hexString.length == 6) {
-      hexString = 'FF$hexString'; // Add alpha if not present
+      hexString = 'FF$hexString';
     }
     return Color(int.parse(hexString, radix: 16));
   }
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed
     nameController.dispose();
     super.dispose();
   }
@@ -361,11 +335,7 @@ class _FoldersPageState extends State<FoldersPage> {
                         iconOptions.map((iconPath) {
                           return DropdownMenuItem(
                             value: iconPath,
-                            child: Image.asset(
-                              iconPath,
-                              width: 24,
-                              height: 24,
-                            ),
+                            child: Image.asset(iconPath, width: 24, height: 24),
                           );
                         }).toList(),
                     decoration: InputDecoration(
@@ -540,12 +510,17 @@ class FoldersContainers extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: titleColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          color: titleColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.clip,
+                        ),
+                        maxLines: 1,
                       ),
                     ),
                     const Spacer(),
