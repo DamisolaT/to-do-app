@@ -2,11 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:verraki_project1/core/customs/custom_text.dart';
 import 'dart:convert';
 import 'package:verraki_project1/core/utils/custom_app_bar.dart';
 import 'package:verraki_project1/core/utils/images.dart';
-import 'package:verraki_project1/views/folder/widgets/folder-container.dart';
-import 'package:verraki_project1/views/personal_page.dart';
+import 'package:verraki_project1/models/color_list.dart';
+import 'package:verraki_project1/models/folder_list.dart';
+import 'package:verraki_project1/models/icon_list.dart';
+import 'package:verraki_project1/views/folder/page_mapper.dart';
+import 'package:verraki_project1/views/folder/widgets/folder_container.dart';
 
 class FoldersPage extends StatefulWidget {
   const FoldersPage({super.key});
@@ -16,96 +20,16 @@ class FoldersPage extends StatefulWidget {
 }
 
 class _FoldersPageState extends State<FoldersPage> {
-  // Move these variables to class level so they persist between rebuilds
   String selectedIcon = '';
+  String selectedFileType = '';
   Color selectedColor = Colors.blue;
   final TextEditingController nameController = TextEditingController();
-
-  // Default folders that will always be shown
-  final Map<String, dynamic> newFolderTemplate = {
-    'title': 'New Folder',
-    'icon': ApppImages.plusIcon,
-    'color': Colors.blue.shade100,
-    'titleColor': Colors.blue,
-    'number': 0,
-    'subtitle': '',
-    'showArrow': false,
-  };
-
-  final List<Map<String, dynamic>> defaultFolders = [
-    {
-      'title': 'Personal',
-      'icon': ApppImages.personalImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.pink,
-      'number': 4,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'UI/UX',
-      'icon': ApppImages.uiuxImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'Writing',
-      'icon': ApppImages.writingImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'Yoga',
-      'icon': ApppImages.yogaImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'Recipes',
-      'icon': ApppImages.recipesImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-  ];
-
-  // List to hold all folders including default and user-created ones
-  List<Map<String, dynamic>> folders = [];
-
-  final List<String> iconOptions = [
-    ApppImages.personalImage,
-    ApppImages.uiuxImage,
-    ApppImages.writingImage,
-    ApppImages.yogaImage,
-    ApppImages.recipesImage,
-  ];
-
-  final List<Color> colorOptions = [
-    Colors.blue,
-    Colors.pink,
-    Colors.green,
-    Colors.purple,
-    Colors.orange,
-    Colors.yellow,
-    Colors.grey,
-  ];
 
   @override
   void initState() {
     super.initState();
-    // Initialize with default values
     selectedIcon = iconOptions[0];
+    selectedFileType = fileTypes[0];
     selectedColor = colorOptions[0];
 
     _loadFolders();
@@ -195,8 +119,8 @@ class _FoldersPageState extends State<FoldersPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Divider(color: Colors.grey, thickness: 0.5),
-              const SizedBox(height: 20),
+              const Divider(color: Colors.grey, thickness: 0.1),
+              const SizedBox(height: 5),
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -215,9 +139,14 @@ class _FoldersPageState extends State<FoldersPage> {
                       onArrowTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const PersonalPage(),
+                            builder: (_) => getPageForFolder(folder),
                           ),
                         );
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const PersonalPage(),
+                        //   ),
+                        // );
                       },
                     );
 
@@ -296,6 +225,7 @@ class _FoldersPageState extends State<FoldersPage> {
               backgroundColor: Colors.white,
               title: const Text("Create New Folder"),
               content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
@@ -316,16 +246,15 @@ class _FoldersPageState extends State<FoldersPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
+                  CustomText(text: 'Select Icon:', fontSize: 15),
                   DropdownButtonFormField<String>(
                     value: selectedIcon,
                     isExpanded: true,
                     onChanged: (value) {
                       if (value != null) {
-                        // Use setDialogState to update the dialog's UI
                         setDialogState(() {
                           selectedIcon = value;
                         });
-                        // Also update the parent widget's state so it persists
                         setState(() {
                           selectedIcon = value;
                         });
@@ -352,7 +281,39 @@ class _FoldersPageState extends State<FoldersPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
+                  CustomText(text: 'Select File Type:', fontSize: 15),
+                  const SizedBox(height: 5),
+                  DropdownButtonFormField<String>(
+                    value: selectedFileType,
+                    hint: const Text('Select File Type'),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedFileType = newValue!;
+                      });
+                    },
+                    items:
+                        fileTypes.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.blue),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -361,34 +322,38 @@ class _FoldersPageState extends State<FoldersPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children:
-                        colorOptions.map((color) {
-                          return GestureDetector(
-                            onTap: () {
-                              // Update both the dialog and parent widget states
-                              setDialogState(() {
-                                selectedColor = color;
-                              });
-                              setState(() {
-                                selectedColor = color;
-                              });
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: color,
-                              radius: 14,
-                              child:
-                                  selectedColor == color
-                                      ? const Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        size: 16,
-                                      )
-                                      : null,
-                            ),
-                          );
-                        }).toList(),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children:
+                          colorOptions.map((color) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setDialogState(() {
+                                    selectedColor = color;
+                                  });
+                                  setState(() {
+                                    selectedColor = color;
+                                  });
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: color,
+                                  radius: 14,
+                                  child:
+                                      selectedColor == color
+                                          ? const Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                            size: 16,
+                                          )
+                                          : null,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                    ),
                   ),
                 ],
               ),
@@ -413,6 +378,7 @@ class _FoldersPageState extends State<FoldersPage> {
                           'number': 0,
                           'subtitle': '',
                           'showArrow': true,
+                          'fileType': selectedFileType,
                         });
                       });
 

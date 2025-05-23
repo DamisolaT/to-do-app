@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:verraki_project1/views/folder/folders_page.dart';
 import 'package:verraki_project1/views/home/home_page.dart';
 import 'package:verraki_project1/navigators/route.dart';
-import 'package:verraki_project1/views/personal_page.dart';
+import 'package:verraki_project1/views/folder/widgets/personal_page.dart';
 
 class AppRouter {
   static final navKey = GlobalKey<NavigatorState>();
