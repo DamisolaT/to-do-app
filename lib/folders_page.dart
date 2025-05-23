@@ -107,7 +107,7 @@ class _FoldersPageState extends State<FoldersPage> {
     selectedColor = colorOptions[0];
 
     // Load saved folders when the widget initializes
-   // _loadFolders();
+    _loadFolders();
   }
 
   // Load folders from SharedPreferences
