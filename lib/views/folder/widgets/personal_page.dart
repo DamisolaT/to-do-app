@@ -1,5 +1,4 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:verraki_project1/core/utils/custom_app_bar.dart';
@@ -12,7 +11,7 @@ class PersonalPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: 'Personal', showFilterIcon: true,),
+      appBar: CustomAppBar(title: 'Personal', showFilterIcon: true),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -24,7 +23,7 @@ class PersonalPage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Divider(color: Colors.grey, thickness: 0.1,),
+                    Divider(color: Colors.grey, thickness: 0.1),
                     SizedBox(height: 20),
                     Container(
                       height: 70,
@@ -231,7 +230,7 @@ class PersonalPage extends StatelessWidget {
           ),
         ),
       ),
-       bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         items: [
