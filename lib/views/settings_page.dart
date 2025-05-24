@@ -18,7 +18,7 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Divider(color: Colors.grey, thickness: 0.5,),
+                Divider(color: Colors.grey, thickness: 0.5),
                 SizedBox(height: 20),
                 Center(
                   child: Stack(

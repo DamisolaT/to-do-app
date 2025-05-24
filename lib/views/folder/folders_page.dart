@@ -1,10 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:verraki_project1/core/customs/custom_text.dart';
 import 'dart:convert';
 import 'package:verraki_project1/core/utils/custom_app_bar.dart';
 import 'package:verraki_project1/core/utils/images.dart';
-import 'package:verraki_project1/personal_page.dart';
+import 'package:verraki_project1/models/color_list.dart';
+import 'package:verraki_project1/models/folder_list.dart';
+import 'package:verraki_project1/models/icon_list.dart';
+import 'package:verraki_project1/views/folder/page_mapper.dart';
+import 'package:verraki_project1/views/folder/widgets/folder_container.dart';
 
 class FoldersPage extends StatefulWidget {
   const FoldersPage({super.key});
@@ -14,192 +20,87 @@ class FoldersPage extends StatefulWidget {
 }
 
 class _FoldersPageState extends State<FoldersPage> {
-  // Move these variables to class level so they persist between rebuilds
   String selectedIcon = '';
+  String selectedFileType = '';
   Color selectedColor = Colors.blue;
   final TextEditingController nameController = TextEditingController();
-
-  // Default folders that will always be shown
-  final Map<String, dynamic> newFolderTemplate = {
-    'title': 'New Folder',
-    'icon': ApppImages.plusIcon,
-    'color': Colors.blue.shade100,
-    'titleColor': Colors.blue,
-    'number': 0,
-    'subtitle': '',
-    'showArrow': false,
-  };
-
-  final List<Map<String, dynamic>> defaultFolders = [
-    {
-      'title': 'Personal',
-      'icon': ApppImages.personalImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.pink,
-      'number': 4,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'UI/UX',
-      'icon': ApppImages.uiuxImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'Writing',
-      'icon': ApppImages.writingImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'Yoga',
-      'icon': ApppImages.yogaImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-    {
-      'title': 'Recipes',
-      'icon': ApppImages.recipesImage,
-      'color': Colors.grey.shade100,
-      'titleColor': Colors.green,
-      'number': 3,
-      'subtitle': 'List',
-      'showArrow': true,
-    },
-  ];
-
-  // List to hold all folders including default and user-created ones
-  List<Map<String, dynamic>> folders = [];
-
-  final List<String> iconOptions = [
-   
-    ApppImages.personalImage,
-    ApppImages.uiuxImage,
-    ApppImages.writingImage,
-    ApppImages.yogaImage,
-    ApppImages.recipesImage,
-  ];
-
-  final List<Color> colorOptions = [
-    Colors.blue,
-    Colors.pink,
-    Colors.green,
-    Colors.purple,
-    Colors.orange,
-    Colors.yellow,
-  ];
 
   @override
   void initState() {
     super.initState();
-    // Initialize with default values
     selectedIcon = iconOptions[0];
+    selectedFileType = fileTypes[0];
     selectedColor = colorOptions[0];
 
-    // Load saved folders when the widget initializes
     _loadFolders();
   }
 
-  // Load folders from SharedPreferences
   Future<void> _loadFolders() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? savedFoldersJson = prefs.getString('user_folders');
 
-      // Start with the "New Folder" template
-      List<Map<String, dynamic>> allFolders = [newFolderTemplate];
+      List<Map<String, dynamic>> loadedFolders = [newFolderTemplate];
 
-      // Add default folders
-      allFolders.addAll(defaultFolders);
-
-      // Add user-created folders if they exist
       if (savedFoldersJson != null && savedFoldersJson.isNotEmpty) {
         final List<dynamic> decodedFolders = jsonDecode(savedFoldersJson);
 
-        // Convert each folder and fix color values (JSON doesn't store Colors directly)
         for (var folder in decodedFolders) {
           if (folder is Map<String, dynamic>) {
-            // Convert color strings back to Color objects
-            if (folder['titleColor'] is String) {
-              folder['titleColor'] = _colorFromHex(folder['titleColor']);
-            }
-            if (folder['color'] is String) {
-              folder['color'] = _colorFromHex(folder['color']);
-            }
-            allFolders.add(Map<String, dynamic>.from(folder));
+            folder['titleColor'] = _colorFromHex(folder['titleColor']);
+            folder['color'] = _colorFromHex(folder['color']);
+            loadedFolders.add(Map<String, dynamic>.from(folder));
           }
         }
       }
 
       setState(() {
-        folders = allFolders;
+        folders = loadedFolders;
       });
     } catch (e) {
-      // If there's an error, fall back to default folders
+      if (kDebugMode) {
+        print('Error loading folders: $e');
+      }
       setState(() {
-        folders = [newFolderTemplate, ...defaultFolders];
+        folders = [newFolderTemplate];
       });
     }
   }
 
-  // Save folders to SharedPreferences
   Future<void> _saveFolders() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      // Skip the first folder (New Folder template) and default folders
       final userFolders =
-          folders.skip(1 + defaultFolders.length).map((folder) {
-            // Create a copy of the folder to modify
-            final Map<String, dynamic> folderCopy = Map<String, dynamic>.from(
-              folder,
-            );
-
-            // Convert Color objects to hex strings for JSON serialization
-            if (folderCopy['titleColor'] is Color) {
-              folderCopy['titleColor'] = _colorToHex(folderCopy['titleColor']);
-            }
-            if (folderCopy['color'] is Color) {
-              folderCopy['color'] = _colorToHex(folderCopy['color']);
-            }
-
+          folders.skip(1).map((folder) {
+            final folderCopy = Map<String, dynamic>.from(folder);
+            folderCopy['titleColor'] = _colorToHex(folderCopy['titleColor']);
+            folderCopy['color'] = _colorToHex(folderCopy['color']);
             return folderCopy;
           }).toList();
 
-      final String encodedFolders = jsonEncode(userFolders);
-      await prefs.setString('user_folders', encodedFolders);
+      final String encoded = jsonEncode(userFolders);
+      await prefs.setString('user_folders', encoded);
+    // ignore: empty_catches
     } catch (e) {
-      print('Error saving folders: $e');
+      
     }
   }
 
-  // Helper function to convert Color to hex string
   String _colorToHex(Color color) {
     return '#${color.value.toRadixString(16).padLeft(8, '0')}';
   }
 
-  // Helper function to convert hex string to Color
   Color _colorFromHex(String hexString) {
     hexString = hexString.replaceFirst('#', '');
     if (hexString.length == 6) {
-      hexString = 'FF$hexString'; // Add alpha if not present
+      hexString = 'FF$hexString';
     }
     return Color(int.parse(hexString, radix: 16));
   }
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed
     nameController.dispose();
     super.dispose();
   }
@@ -219,8 +120,8 @@ class _FoldersPageState extends State<FoldersPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Divider(color: Colors.grey, thickness: 0.5),
-              const SizedBox(height: 20),
+              const Divider(color: Colors.grey, thickness: 0.1),
+              const SizedBox(height: 5),
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -239,9 +140,14 @@ class _FoldersPageState extends State<FoldersPage> {
                       onArrowTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const PersonalPage(),
+                            builder: (_) => getPageForFolder(folder),
                           ),
                         );
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const PersonalPage(),
+                        //   ),
+                        // );
                       },
                     );
 
@@ -309,10 +215,8 @@ class _FoldersPageState extends State<FoldersPage> {
   }
 
   void showCreateFolderDialog(BuildContext context) {
-    // Reset or clear the text controller for a new dialog
     nameController.clear();
 
-    // Create a StatefulBuilder to manage dialog state
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -322,6 +226,7 @@ class _FoldersPageState extends State<FoldersPage> {
               backgroundColor: Colors.white,
               title: const Text("Create New Folder"),
               content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
@@ -342,16 +247,15 @@ class _FoldersPageState extends State<FoldersPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
+                  CustomText(text: 'Select Icon:', fontSize: 15),
                   DropdownButtonFormField<String>(
                     value: selectedIcon,
                     isExpanded: true,
                     onChanged: (value) {
                       if (value != null) {
-                        // Use setDialogState to update the dialog's UI
                         setDialogState(() {
                           selectedIcon = value;
                         });
-                        // Also update the parent widget's state so it persists
                         setState(() {
                           selectedIcon = value;
                         });
@@ -361,11 +265,7 @@ class _FoldersPageState extends State<FoldersPage> {
                         iconOptions.map((iconPath) {
                           return DropdownMenuItem(
                             value: iconPath,
-                            child: Image.asset(
-                              iconPath,
-                              width: 24,
-                              height: 24,
-                            ),
+                            child: Image.asset(iconPath, width: 24, height: 24),
                           );
                         }).toList(),
                     decoration: InputDecoration(
@@ -382,7 +282,39 @@ class _FoldersPageState extends State<FoldersPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
+                  CustomText(text: 'Select File Type:', fontSize: 15),
+                  const SizedBox(height: 5),
+                  DropdownButtonFormField<String>(
+                    value: selectedFileType,
+                    hint: const Text('Select File Type'),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedFileType = newValue!;
+                      });
+                    },
+                    items:
+                        fileTypes.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.blue),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -391,34 +323,38 @@ class _FoldersPageState extends State<FoldersPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children:
-                        colorOptions.map((color) {
-                          return GestureDetector(
-                            onTap: () {
-                              // Update both the dialog and parent widget states
-                              setDialogState(() {
-                                selectedColor = color;
-                              });
-                              setState(() {
-                                selectedColor = color;
-                              });
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: color,
-                              radius: 14,
-                              child:
-                                  selectedColor == color
-                                      ? const Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        size: 16,
-                                      )
-                                      : null,
-                            ),
-                          );
-                        }).toList(),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children:
+                          colorOptions.map((color) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setDialogState(() {
+                                    selectedColor = color;
+                                  });
+                                  setState(() {
+                                    selectedColor = color;
+                                  });
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: color,
+                                  radius: 14,
+                                  child:
+                                      selectedColor == color
+                                          ? const Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                            size: 16,
+                                          )
+                                          : null,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                    ),
                   ),
                 ],
               ),
@@ -443,6 +379,7 @@ class _FoldersPageState extends State<FoldersPage> {
                           'number': 0,
                           'subtitle': '',
                           'showArrow': true,
+                          'fileType': selectedFileType,
                         });
                       });
 
@@ -477,7 +414,7 @@ class _FoldersPageState extends State<FoldersPage> {
             content: Text('Are you sure you want to delete "$folderTitle"?'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context), // Cancel
+                onPressed: () => Navigator.pop(context),
                 child: const Text('Cancel'),
               ),
               TextButton(
@@ -485,8 +422,8 @@ class _FoldersPageState extends State<FoldersPage> {
                   setState(() {
                     folders.removeAt(index);
                   });
-                  _saveFolders(); // Persist updated list
-                  Navigator.pop(context); // Close dialog
+                  _saveFolders();
+                  Navigator.pop(context);
                 },
                 child: const Text(
                   'Delete',
@@ -495,86 +432,6 @@ class _FoldersPageState extends State<FoldersPage> {
               ),
             ],
           ),
-    );
-  }
-}
-
-class FoldersContainers extends StatelessWidget {
-  const FoldersContainers({
-    super.key,
-    required this.image,
-    required this.title,
-    required this.subtitle,
-    required this.number,
-    this.color,
-    this.titleColor = Colors.blue,
-    required this.showArrow,
-    this.onArrowTap,
-  });
-
-  final String image;
-  final String title;
-  final String subtitle;
-  final int number;
-  final Color? color;
-  final Color titleColor;
-  final bool showArrow;
-  final VoidCallback? onArrowTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color ?? Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(image, height: 70),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: titleColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (showArrow)
-                      GestureDetector(
-                        onTap: onArrowTap,
-                        child: Icon(Icons.arrow_forward, color: titleColor),
-                      ),
-                  ],
-                ),
-                if (number != 0 && subtitle.isNotEmpty)
-                  Row(
-                    children: [
-                      Text(
-                        number.toString(),
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        subtitle,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

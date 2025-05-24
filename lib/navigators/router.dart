@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:verraki_project1/folders_page.dart';
-import 'package:verraki_project1/home/home_page.dart';
+import 'package:verraki_project1/views/folder/folders_page.dart';
+import 'package:verraki_project1/views/home/home_page.dart';
 import 'package:verraki_project1/navigators/route.dart';
-import 'package:verraki_project1/personal_page.dart';
+import 'package:verraki_project1/views/folder/widgets/personal_page.dart';
 
 class AppRouter {
   static final navKey = GlobalKey<NavigatorState>();
@@ -16,10 +16,8 @@ class AppRouter {
         return CupertinoPageRoute(builder: (_) => FoldersPage());
       case AppRouteStrings.personalPage:
         return CupertinoPageRoute(builder: (_) => PersonalPage());
-        default:
+      default:
         return CupertinoPageRoute(builder: (_) => FoldersPage());
-
-          
     }
   }
 }
