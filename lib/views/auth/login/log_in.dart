@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:verraki_project1/core/customs/custom_textfield.dart';
 import 'package:verraki_project1/core/utils/app_button.dart';
 import 'package:verraki_project1/core/utils/constant.dart';
-import 'package:verraki_project1/core/utils/custom_text.dart';
 import 'package:verraki_project1/core/utils/images.dart';
 import 'package:verraki_project1/navigators/router.dart';
 import 'package:verraki_project1/views/auth/signup/sign_up.dart';
