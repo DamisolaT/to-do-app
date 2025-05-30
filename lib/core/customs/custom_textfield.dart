@@ -210,10 +210,7 @@ class _CustomBorderedTextFormFieldState
                     widget.hintStyle ??
                     TextStyle(color: Color.fromRGBO(100, 100, 100, 1)),
                 errorText: widget.errorText,
-                errorStyle: const TextStyle(
-                  color: Color.fromRGBO(196, 196, 196, 1),
-                  fontSize: 12,
-                ),
+                errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
                 counterText: '',
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -228,10 +225,7 @@ class _CustomBorderedTextFormFieldState
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(
-                    color: Colors.red,
-                    width: 1.5,
-                  ), // Full red border
+                  borderSide: const BorderSide(color: Colors.red, width: 1.5),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),

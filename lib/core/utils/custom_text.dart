@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-
 class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final TextInputType? keyboardType;
@@ -11,7 +9,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatter;
-  
+
   final EdgeInsetsGeometry? contentPadding;
 
   const CustomTextField({
@@ -21,9 +19,9 @@ class CustomTextField extends StatefulWidget {
     this.isObscureText = false,
     this.obscureCharacter = '•',
     required this.hintText,
-    this.contentPadding = const EdgeInsets.all(12), 
+    this.contentPadding = const EdgeInsets.all(12),
     this.validator,
-     this.inputFormatter, // Default padding
+    this.inputFormatter,
   });
 
   @override
@@ -55,29 +53,30 @@ class _CustomTextFieldState extends State<CustomTextField> {
       style: ralewayMedium.copyWith(color: Colors.black, fontSize: 14),
       decoration: InputDecoration(
         contentPadding: widget.contentPadding,
-        
+
         constraints: BoxConstraints(maxHeight: height * 0.065, minWidth: width),
         filled: true,
         fillColor: Colors.white,
         hintText: widget.hintText,
         hintStyle: ralewayMedium.copyWith(color: Colors.grey, fontSize: 14),
-      
-        
-        
-        suffix: widget.isObscureText
-              ? GestureDetector(
+
+        suffix:
+            widget.isObscureText
+                ? GestureDetector(
                   onTap: () {
                     setState(() {
                       _isObscure = !_isObscure;
                     });
                   },
                   child: Text(
-                    'Show', 
-                    style: ralewayMedium.copyWith(color: Colors.blue, fontSize: 14),
+                    'Show',
+                    style: ralewayMedium.copyWith(
+                      color: Colors.blue,
+                      fontSize: 14,
+                    ),
                   ),
                 )
-              : null,
-              
+                : null,
 
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -102,4 +101,5 @@ TextStyle ralewayMedium = const TextStyle(
 );
 
 final emailRegex = RegExp(
-    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+);
