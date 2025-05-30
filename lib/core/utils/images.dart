@@ -9,6 +9,8 @@ class ApppImages {
   static const String writingImage = '${basePath}writing$format';
   static const String yogaImage = '${basePath}yoga$format';
   static const String recipesImage = '${basePath}recipes$format';
+  static const String todoImage = '${basePath}todo$format';
+  static const String logInImage = '${basePath}login$format';
 }
 
 class AppIcons {

@@ -69,4 +69,13 @@ final List<Map<String, dynamic>> defaultFolders = [
 // List to hold all folders including default and user-created ones
 List<Map<String, dynamic>> folders = [];
 
-final List<String> fileTypes = ['Personal', 'Notes', 'Todo'];
+final List<String> fileTypes = [
+  'Personal',
+  'Notes',
+  'Todo',
+  'Projects',
+  'Travel',
+  'Reminders',
+  'Important',
+  'Archive',
+];

@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:verraki_project1/views/folder/folders_page.dart';
+import 'package:provider/provider.dart';
+import 'package:verraki_project1/controller/folder_controller.dart';
+
+
+import 'package:verraki_project1/views/auth/onboarding/splash.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_)=> FolderController()..loadFolders(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,10 +33,10 @@ class MyApp extends StatelessWidget {
         title: 'To-Do App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          appBarTheme: AppBarTheme(scrolledUnderElevation: 0),
+          appBarTheme: const AppBarTheme(scrolledUnderElevation: 0),
           useMaterial3: true,
         ),
-        home: FoldersPage(),
+        home: const SplashScreen(),
       ),
     );
   }

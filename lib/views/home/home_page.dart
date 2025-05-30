@@ -36,6 +36,18 @@ class _HomePageState extends State<HomePage> {
             icon: SvgPicture.asset(AppIcons.homeIcon, height: 20),
             label: "",
           ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(AppIcons.folderIcon, height: 20),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(AppIcons.personalIcon, height: 20),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(AppIcons.addIcon, height: 20),
+            label: "",
+          ),
         ],
       ),
       body: screens[currentindex],

@@ -187,49 +187,7 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: SvgPicture.asset(AppIcons.homeIcon, width: 24, height: 24),
-            ),
-            label: '',
-          ),
-
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: SvgPicture.asset(
-                AppIcons.folderIcon,
-                width: 24,
-                height: 24,
-              ),
-            ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: SvgPicture.asset(
-                AppIcons.personalIcon,
-                width: 24,
-                height: 24,
-              ),
-            ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: SvgPicture.asset(AppIcons.addIcon, width: 24, height: 24),
-            ),
-            label: '',
-          ),
-        ],
-      ),
+      
     );
   }
 }
