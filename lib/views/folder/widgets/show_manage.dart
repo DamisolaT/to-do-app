@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:verraki_project1/views/folder/widgets/edit_dialogue.dart';
 
-
 void showManageFolderDialog({
   required BuildContext context,
   required int index,
@@ -13,7 +12,7 @@ void showManageFolderDialog({
   required List<String> fileTypes,
   required List<Color> colorOptions,
   required Function(List<Map<String, dynamic>>) updateFolders,
-  required Function(int) onDelete, // a callback for delete
+  required Function(int) onDelete,
 }) {
   final folderTitle = folders[index]['title'];
 
@@ -25,7 +24,7 @@ void showManageFolderDialog({
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context); // Close manage dialog
             showEditFolderDialog(
               context: context,
               index: index,
@@ -41,13 +40,33 @@ void showManageFolderDialog({
         ),
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
-            onDelete(index); 
+            Navigator.pop(context); // Close manage dialog first
+            // Show confirmation dialog before deleting
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Confirm Delete'),
+                content: Text('Are you sure you want to delete "$folderTitle"?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context), // Cancel deletion
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close confirmation dialog
+                      onDelete(index); // Call delete callback
+                    },
+                    child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              ),
+            );
           },
           child: const Text('Delete', style: TextStyle(color: Colors.red)),
         ),
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context), // Cancel manage dialog
           child: const Text('Cancel'),
         ),
       ],

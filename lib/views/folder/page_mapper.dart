@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:verraki_project1/views/folder/widgets/archieve_page.dart';
-import 'package:verraki_project1/views/folder/widgets/important_page.dart';
-import 'package:verraki_project1/views/folder/widgets/notes_page.dart';
-import 'package:verraki_project1/views/folder/widgets/personal_page.dart';
-import 'package:verraki_project1/views/folder/widgets/projects_page.dart';
-import 'package:verraki_project1/views/folder/widgets/reminder_page.dart';
-import 'package:verraki_project1/views/folder/widgets/todo_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/archieve_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/important_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/notes_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/personal_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/projects_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/reminder_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/todo_page.dart';
+
+
 
 Widget getPageForFolder(Map<String, dynamic> folder) {
   final String type = folder['fileType'];
@@ -15,17 +17,17 @@ Widget getPageForFolder(Map<String, dynamic> folder) {
   switch (type) {
     case 'Notes':
       return NotesPage(folderId: 'id');
-      case 'Projects':
+    case 'Projects':
       return ProjectsPage(folderId: 'title');
-      case 'Reminders':
+    case 'Reminders':
       return ReminderPage(folderId: 'id');
-      case 'Important':
+    case 'Important':
       return ImportantPage(folderId: title);
-      case 'Archieve':
+    case 'Archieve':
       return ArchievePage(folderId: 'id');
-       case 'Todo':
+    case 'Todo':
       return TodoPage(folderId: 'id');
-      
+
     // case 'images':
     //   return ImagesPage(folderId: id);
     default:

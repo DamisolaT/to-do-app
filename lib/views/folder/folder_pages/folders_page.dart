@@ -120,7 +120,7 @@ class _FoldersPageState extends State<FoldersPage> {
                       );
                     } else {
                       return GestureDetector(
-                        onTap:
+                        onLongPress:
                             () => showManageFolderDialog(
                               context: context,
                               index: index,

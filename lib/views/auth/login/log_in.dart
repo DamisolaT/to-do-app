@@ -6,7 +6,8 @@ import 'package:verraki_project1/core/utils/constant.dart';
 import 'package:verraki_project1/core/utils/images.dart';
 import 'package:verraki_project1/navigators/router.dart';
 import 'package:verraki_project1/views/auth/signup/sign_up.dart';
-import 'package:verraki_project1/views/folder/folders_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/folders_page.dart';
+
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});

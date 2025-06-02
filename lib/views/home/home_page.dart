@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:verraki_project1/views/folder/widgets/add_page.dart';
+
 import 'package:verraki_project1/core/utils/images.dart';
-import 'package:verraki_project1/views/folder/folders_page.dart';
-import 'package:verraki_project1/views/folder/widgets/personal_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/add_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/folders_page.dart';
+import 'package:verraki_project1/views/folder/folder_pages/personal_page.dart';
+
+
 import 'package:verraki_project1/views/settings_page.dart';
 
 class HomePage extends StatefulWidget {

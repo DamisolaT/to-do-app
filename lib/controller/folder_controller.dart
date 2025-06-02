@@ -9,12 +9,18 @@ class FolderController extends ChangeNotifier {
   // Make sure folders is declared here to hold the folder data
   List<Map<String, dynamic>> folders = [newFolderTemplate];
 
+  void setFolders(List<Map<String, dynamic>> updatedList) {
+  folders = updatedList;
+  saveFolders();
+  notifyListeners();
+}
+
    void addFolder(Map<String, dynamic> folder) {
     folders.add(folder);
     saveFolders();
     notifyListeners();
   }
- 
+
   void updateFolder(int index, Map<String, dynamic> newFolder) {
     folders[index] = newFolder;
     notifyListeners();

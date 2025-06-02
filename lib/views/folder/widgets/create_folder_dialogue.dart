@@ -21,6 +21,8 @@ void showCreateFolderDialog({
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      Color _currentSelectedColor = selectedColor; // local selected color state
+
       return StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
@@ -58,13 +60,12 @@ void showCreateFolderDialog({
                         setDialogState(() => onIconChanged(value));
                       }
                     },
-                    items:
-                        iconOptions.map((iconPath) {
-                          return DropdownMenuItem(
-                            value: iconPath,
-                            child: Image.asset(iconPath, width: 24, height: 24),
-                          );
-                        }).toList(),
+                    items: iconOptions.map((iconPath) {
+                      return DropdownMenuItem(
+                        value: iconPath,
+                        child: Image.asset(iconPath, width: 24, height: 24),
+                      );
+                    }).toList(),
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -88,13 +89,12 @@ void showCreateFolderDialog({
                     onChanged: (newValue) {
                       setDialogState(() => onFileTypeChanged(newValue));
                     },
-                    items:
-                        fileTypes.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                    items: fileTypes.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -121,35 +121,44 @@ void showCreateFolderDialog({
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children:
-                          colorOptions.map((color) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setDialogState(() => onColorSelected(color));
-                                },
-                                child: CircleAvatar(
-                                  backgroundColor: color,
-                                  radius: 14,
-                                  child:
-                                      selectedColor == color
-                                          ? const Icon(
-                                            Icons.check,
-                                            color: Colors.white,
-                                            size: 16,
-                                          )
-                                          : null,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                      children: colorOptions.map((color) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              setDialogState(() {
+                                _currentSelectedColor = color;
+                              });
+                              onColorSelected(color);
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: color,
+                              radius: 14,
+                              child: _currentSelectedColor == color
+                                  ? const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 16,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],
               ),
             ),
+            actionsAlignment: MainAxisAlignment.spaceBetween, // spread buttons
             actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
               TextButton(
                 onPressed: () {
                   final folderName = nameController.text.trim();
@@ -182,8 +191,8 @@ void showCreateFolderDialog({
                   folderController.addFolder({
                     'title': folderName,
                     'icon': selectedIcon,
-                    'color': selectedColor.withOpacity(0.2),
-                    'titleColor': selectedColor,
+                    'color': _currentSelectedColor.withOpacity(0.2),
+                    'titleColor': _currentSelectedColor,
                     'number': 0,
                     'subtitle': '',
                     'showArrow': true,
@@ -197,7 +206,6 @@ void showCreateFolderDialog({
                   style: TextStyle(fontSize: 20, color: Colors.blue),
                 ),
               ),
-             
             ],
           );
         },
