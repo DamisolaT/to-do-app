@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:verraki_project1/controller/folder_controller.dart';
 import 'package:verraki_project1/core/customs/custom_text.dart';
+import 'package:verraki_project1/views/folder/widgets/show_snackbar.dart';
 
 void showCreateFolderDialog({
   required BuildContext context,
@@ -21,7 +22,7 @@ void showCreateFolderDialog({
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      Color _currentSelectedColor = selectedColor; // local selected color state
+      Color currentSelectedColor = selectedColor;
 
       return StatefulBuilder(
         builder: (context, setDialogState) {
@@ -60,12 +61,13 @@ void showCreateFolderDialog({
                         setDialogState(() => onIconChanged(value));
                       }
                     },
-                    items: iconOptions.map((iconPath) {
-                      return DropdownMenuItem(
-                        value: iconPath,
-                        child: Image.asset(iconPath, width: 24, height: 24),
-                      );
-                    }).toList(),
+                    items:
+                        iconOptions.map((iconPath) {
+                          return DropdownMenuItem(
+                            value: iconPath,
+                            child: Image.asset(iconPath, width: 24, height: 24),
+                          );
+                        }).toList(),
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -89,12 +91,13 @@ void showCreateFolderDialog({
                     onChanged: (newValue) {
                       setDialogState(() => onFileTypeChanged(newValue));
                     },
-                    items: fileTypes.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                    items:
+                        fileTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -121,30 +124,32 @@ void showCreateFolderDialog({
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: colorOptions.map((color) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              setDialogState(() {
-                                _currentSelectedColor = color;
-                              });
-                              onColorSelected(color);
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: color,
-                              radius: 14,
-                              child: _currentSelectedColor == color
-                                  ? const Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 16,
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                      children:
+                          colorOptions.map((color) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setDialogState(() {
+                                    currentSelectedColor = color;
+                                  });
+                                  onColorSelected(color);
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: color,
+                                  radius: 14,
+                                  child:
+                                      currentSelectedColor == color
+                                          ? const Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                            size: 16,
+                                          )
+                                          : null,
+                                ),
+                              ),
+                            );
+                          }).toList(),
                     ),
                   ),
                 ],
@@ -154,10 +159,7 @@ void showCreateFolderDialog({
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  "Cancel",
-                  style: TextStyle(fontSize: 20),
-                ),
+                child: const Text("Cancel", style: TextStyle(fontSize: 20)),
               ),
               TextButton(
                 onPressed: () {
@@ -176,23 +178,17 @@ void showCreateFolderDialog({
                   );
 
                   if (folderExists) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Folder name already exists!',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                   showTopSnackBar(context, 'Folder name already exists!',false);
+
+
                     return;
                   }
 
                   folderController.addFolder({
                     'title': folderName,
                     'icon': selectedIcon,
-                    'color': _currentSelectedColor.withOpacity(0.2),
-                    'titleColor': _currentSelectedColor,
+                    'color': currentSelectedColor.withOpacity(0.2),
+                    'titleColor': currentSelectedColor,
                     'number': 0,
                     'subtitle': '',
                     'showArrow': true,
@@ -212,4 +208,9 @@ void showCreateFolderDialog({
       );
     },
   );
+  
+
 }
+
+
+

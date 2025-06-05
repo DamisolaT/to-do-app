@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:verraki_project1/core/customs/custom_textfield.dart';
 import 'package:verraki_project1/core/customs/page_wrapper.dart';
 import 'package:verraki_project1/core/utils/app_button.dart';
 import 'package:verraki_project1/core/utils/constant.dart';
@@ -75,59 +76,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     const SizedBox(height: 40),
-                    CustomTextField(
-                      controller: _nameController,
+                    CustomBorderedTextFormField(
+                      title: '',
                       hintText: "Enter your full name",
-                      isObscureText: false,
-                      inputFormatter: [],
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    CustomTextField(
-                      controller: _emailController,
-                      hintText: "Enter your email",
-                      isObscureText: false,
-                      inputFormatter: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[a-zA-Z@._-]'),
-                        ),
-                      ],
                       validator: FormValidator.validateEmail,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 16,
-                      ),
+                      
+                      controller: _nameController,
                     ),
                     const SizedBox(height: 15),
-                    CustomTextField(
-                      controller: _passwordController,
+                    CustomBorderedTextFormField(
+                      title: '',
+                      hintText: "Enter your email",
+                      validator: FormValidator.validateEmail,
+                     
+                      controller: _emailController,
+                    ),
+                    const SizedBox(height: 15),
+                   CustomBorderedTextFormField(
+                      title: '',
                       hintText: "Enter password",
-                      isObscureText: true,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 16,
-                      ),
-                      inputFormatter: [
-                        FilteringTextInputFormatter.deny(RegExp(r' ')),
-                      ],
-                      validator: FormValidator.validatePassword,
+                      validator: FormValidator.validateEmail,
+                     
+                      controller: _passwordController,
                     ),
                     const SizedBox(height: 15),
-                    CustomTextField(
-                      controller: _passwordController,
+                    CustomBorderedTextFormField(
+                      title: '',
                       hintText: "Confirm password",
-                      isObscureText: true,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 16,
-                      ),
-                      inputFormatter: [
-                        FilteringTextInputFormatter.deny(RegExp(r' ')),
-                      ],
-                      validator: FormValidator.validatePassword,
+                      validator: FormValidator.validateEmail,
+                      
+                      controller: _emailController,
                     ),
                     const SizedBox(height: 30),
                     AppButton(
