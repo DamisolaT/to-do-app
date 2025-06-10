@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:verraki_project1/core/customs/custom_textfield.dart';
@@ -5,6 +6,7 @@ import 'package:verraki_project1/core/utils/app_button.dart';
 import 'package:verraki_project1/core/utils/constant.dart';
 import 'package:verraki_project1/core/utils/images.dart';
 import 'package:verraki_project1/navigators/router.dart';
+import 'package:verraki_project1/views/auth/firebase_auth_impl/firebase_auth_service.dart';
 import 'package:verraki_project1/views/auth/signup/sign_up.dart';
 import 'package:verraki_project1/views/folder/folder_pages/folders_page.dart';
 
@@ -17,10 +19,24 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+  final FirebaseAuthServices _auth = FirebaseAuthServices();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   // final String? errorText;
+
+
+
+  
+  @override
+  void dispose() {
+    
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,11 +118,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
                     AppButton(
                       text: 'Log In',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => FoldersPage()),
-                        );
-                      },
+                      onPressed:  _signIn
                     ),
                     const SizedBox(height: 20),
 
@@ -141,4 +153,28 @@ class _LogInScreenState extends State<LogInScreen> {
       ),
     );
   }
+
+   void _signIn() async {
+  
+  String email = _emailController.text.trim();
+  String password = _passwordController.text.trim();
+
+  if (_formKey.currentState!.validate()) {
+    User? user = await _auth.signInWithEmailAndPassword(email, password);
+    if (user != null) {
+      
+      Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(builder: (context) => FoldersPage()),
+      );
+    } else {
+      
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed. Try again.')),
+      );
+    }
+  }
+}
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "760666366831",
+    "project_id": "to-do-app-aa5d5",
+    "storage_bucket": "to-do-app-aa5d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760666366831:android:663e0142c6af2ce2dafe9a",
+        "android_client_info": {
+          "package_name": "com.example.verraki_project1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBb6EDiPggCUQdMkR_ARWS-GovDrifqA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
